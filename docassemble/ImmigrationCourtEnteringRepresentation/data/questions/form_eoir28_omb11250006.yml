@@ -4,13 +4,13 @@ include:
 ---
 metadata:
   title: >-
-    Form EOIR-28, OMB#1125-0006
+    Form EOIR28 omb11250006
   short title: >-
-    Form EOIR-28
+    Form EOIR28 omb11250006
   description: |-
-    This interview helps someone in Massachusetts file a Notice of Entry of Appearance of Attorney or Representative Before the Immigration Court.
+    This interview helps someone file a Notice of Entry of Appearance of Attorney or Representative Before the Immigration Court.
   can_I_use_this_form: |
-    If you are an attorney or representative for an immigration court case, you can use this interview to fill a form notifying the court of your entry into the case.
+    If you are a attorney or representative for an immigration court case, you can use this interview to fill a form notifying the court of your entry into the case.
   before_you_start: |
     This interview will help you file a Notice of Entry of Appearance of Attorney or Representative Before the Immigration Court.
     
@@ -23,7 +23,6 @@ metadata:
     When you are finished, you will need to:
     
     1. File the document through the online case portal or other appropriate means
-    1.
   maturity: production
   estimated_completion_minutes: 20
   estimated_completion_delta: 5
@@ -32,27 +31,25 @@ metadata:
   tags:
     - "GO-00-00-00-00"
   authors:
-    - Court Forms Online
+    - Peter Samson
   original_form:
     - https://www.justice.gov/eoir/file/639746/dl
-  original_form_published_on: 2025-02-01
+  original_form_published_on: ""
   help_page_url: >-
     https://www.justice.gov/eoir
   help_page_title: >-
-    https://www.justice.gov/eoir
+    Executive Office for Immigration Review
   allowed_courts: 
-    - "Executive Office for Immigration Review"
     - "Immigration Court"
-    - "U.S. Department of Justice"
   typical_role: "na"
   al_weaver_version: "1.11.0"
-  generated_on: "2025-09-16"
+  generated_on: "2025-10-01"
   languages:
     - en
   jurisdiction: NAM-US-US+MA
-  review_date: 2025-09-16
+  review_date: 2025-10-01
   form_titles:
-    - Form EOIR-28, OMB#1125-0006
+    - Form EOIR28 omb11250006
   form_numbers: []
   update_notes: |
 ---
@@ -74,9 +71,10 @@ code: |
   al_form_type = "existing_case" 
 ---
 objects:
+  - full_court: ALPeopleList.using(ask_number=True,target_number=1)
   - agent_represented_attorney: ALPeopleList.using(ask_number=True,target_number=1)
+  - representative1_law_firm_or_organization: ALPeopleList.using(ask_number=True,target_number=1)
   - users: ALPeopleList.using(ask_number=True,target_number=1)
-  - service_attorney: ALPeopleList.using(ask_number=True,target_number=1)
 ---
 sections:
   - review_form_eoir28_omb11250006: Review your answers
@@ -87,27 +85,28 @@ comment: |
 id: interview_order_form_eoir28_omb11250006
 code: |
   # Set the allowed courts for this interview
-  allowed_courts = [' Executive Office for Immigration Review', ' Immigration Court', 'Other', 'U.S. Department of Justice']
+  allowed_courts = ['Immigration Court', 'Other']
   nav.set_section("review_form_eoir28_omb11250006")
   user_role = "na"
   user_ask_role = "na"
-  users.gather()
-  set_parts(subtitle=str(users))
-  alien_number
+  party1_name_first
+  party1_address_line_one
   is_all_proceedings
-  set_progress(16)
   is_attorney
+  set_progress(20)
   is_entered_as_attorney
   representative1_name_middle_initial
-  set_progress(32)
-  is_primary_attorney_or_represenative
+  representative1_address_line_one
+  representative1_phone_number
+  is_non_primary_attorney_or_representative
+  is_on_behalf_of_attorney
+  is_providing_pro_bono
+  set_progress(40)
   service_delivery_date
   additional_information
-  set_progress(48)
-  users[0].address.address
-  courts.gather()
-  set_progress(64)
-  proof_of_service_signature
+  representative1_signature
+  set_progress(60)
+  agent1_signature
   interview_order_form_eoir28_omb11250006 = True
 ---
 ###################### Main order ######################
@@ -130,13 +129,14 @@ code: |
   )
   form_eoir28_omb11250006_preview_question
   basic_questions_signature_flow    
-  proof_of_service_signature
+  representative1_signature
+  agent1_signature
   form_eoir28_omb11250006_download
 ---
-id: Form_EOIR28_OMB11250006
+id: Form_EOIR28_omb11250006
 continue button field: form_eoir28_omb11250006_intro
 question: |
-  Form EOIR-28, OMB#1125-0006
+  Form EOIR28 omb11250006
 subquestion: |
   This interview will help you file a Notice of Entry of Appearance of Attorney or Representative Before the Immigration Court.
   
@@ -150,37 +150,62 @@ subquestion: |
   
   1. File the document through the online case portal or other appropriate means
 
-  If you are an attorney or representative for an immigration court case, you can use this interview to fill a form notifying the court of your entry into the case.
+  If you are a attorney or representative for an immigration court case, you can use this interview to fill a form notifying the court of your entry into the case.
 
   Most people take about 20 minutes to complete this interview.
 ---
-id: Alien Number
+id: Represented Party Name
 question: |
-  Alien Number
+  Represented Party Information
 subquestion: |
-  Provide Alien ("A") number of the party represented in this case
+  Provide information about the party to be represented.
 fields:
+  - "First Name": party1_name_first
+    maxlength: 24
+  - "Middle Initial": party1_name_middle_initial
+    maxlength: 8
+    required: False
+  - "Last Name": party1_name_last
+    maxlength: 30
   - "Alien Number": alien_number
     maxlength: 23
+---
+id: Represented Party Address
+question: |
+  Represented Party Information
+subquestion: |
+  Provide information about the party to be represented.
+fields:
+  - "Street Address": party1_address_line_one
+    maxlength: 44
+  - "Unit": party1_address_unit
+    maxlength: 18
+    required: False
+  - "City": party1_address_city
+    maxlength: 35
+  - "Zip Code": party1_address_zip
+    maxlength: 21
+  - "State": party1_address_state
+    maxlength: 6
 ---
 id: Entry of Appearance
 question: |
   Entry of Appearance
 subquestion: |
-  (please check one of the following):
+  Select one for the purpose of this hearing
 fields:
-  - "Entry of appearance for all proceedings": is_all_proceedings
+  - "Is all proceedings": is_all_proceedings
     datatype: yesno
-  - "Entry of appearance for only custody and bond proceeding": is_custody_and_bond_proceeding
+  - "Is custody and bond proceeding": is_custody_and_bond_proceeding
     datatype: yesno
-  - "Entry of appearance for all except custody and bond proceeding": is_all_but_custody_and_bond_proceeding
+  - "Is all but custody and bond proceeding": is_all_but_custody_and_bond_proceeding
     datatype: yesno
 ---
-id: Attorney or Representative
+id: Attorney or Representative Qualification
 question: |
-  Attorney or Representative
+  Attorney or Representative Qualification
 subquestion: |
-  Check one of the following and fill out applicable information.
+  (Select one of the following and fill out applicable information)
 fields:
   - "Eligible Attorney": is_attorney
     help: |
@@ -191,16 +216,22 @@ fields:
       in the practice of law in any jurisdiction (if subject to such an order, do not check this box 
       and explain in additional information section).
     datatype: yesno
+  - "Full Name of Court": full_court_name
+    maxlength: 28
+    required: False
+    show if: is_attorney
   - "Bar Number (if applicable)": bar_number
     maxlength: 22
     required: False
     show if: is_attorney
   - "Accredited Representative": is_accredited_representative
+    datatype: yesno
     help: |
       I am a representative accredited to appear before the Executive Office for Immigration Review 
       as defined in 8 C.F.R. § 1292.1(a)(4)
-    datatype: yesno
-  - "Represented organization if accredited representative defined in 8 C.F.R. § 1292.1(a)(4):": represented_organization
+  - "Represented Organization": represented_organization
+    help: |
+      Represented organization if accredited representative defined in 8 C.F.R. § 1292.1(a)(4)
     maxlength: 45
     required: False
     show if: is_accredited_representative
@@ -219,107 +250,138 @@ fields:
     help: |
       I am an accredited foreign government official, as defined in 8 C.F.R. § 1291.1(a)(5)
     datatype: yesno
-  - "If an accredited foreign government official, I am from:": represented_country
+  - "Country": represented_country
     maxlength: 16
     required: False
     show if: is_foreign_official
-  - "Authorized to practice on December 23, 1952:": is_authorized_to_practice
+  - "Authorized to practice on December 23, 1952": is_authorized_to_practice
     help: |
       I am a person who was authorized to practice on December 23, 1952, under 8 C.F.R. § 1292.1(b)
     datatype: yesno
 ---
-id: Attorney or Representative
+id: Attorney or Representative Entrance
 question: |
-  Attorney or Representative
-subquestion: |
-  Please check one of the following and fill information.
+  Attorney or Representative Entrance
 fields:
-  - "I hereby enter my appearance as attorney or representative for, and at the request of, the party named above:": is_entered_as_attorney
+  - "I hereby enter my appearance as attorney or representative for the party named": is_entered_as_attorney
     datatype: yesno
-  - "EOIR has ordered the provision of a Qualified Representative for the party named abov e and I appear in that capacity:": is_ordered_qualified_representative
+  - "EOIR has ordered the provision of a Qualified Representative for the party named and I appear in that capacity": is_ordered_qualified_representative
     datatype: yesno
   - "EOIR ID Number": eoir_id
     maxlength: 36
-  - "Date of Representative Signature": signature1_date
-    datatype: date
-    required: False
 ---
-id: Attorney or Representative Information
+id: Attorney or Representative Name
 question: |
   Attorney or Representative Information
-subquestion: |
-  Provide identifying and contact information for the attorney or representative.
 fields:
-  - "Representative Middle Initial": representative1_name_middle_initial
-    maxlength: 11
-  - "Representative Last Name": representative1_name_last
-    maxlength: 36
-  - "Representative First Name": representative1_name_first
+  - "First Name": representative1_name_first
     maxlength: 34
-  - "Law firm or Organization": law_firm_or_organization
-    maxlength: 71
-  - "Representative Address Unit": representative1_address_unit
-    maxlength: 27
-  - "Representative Address Number and Street": representative1_address_line_one
-    maxlength: 54
-  - "Representative Address City": representative1_address_city
+  - "Middle Initial": representative1_name_middle_initial
+    maxlength: 11
+  - "Last Name": representative1_name_last
     maxlength: 36
-  - "Representative Address State": representative1_address_state
+  - "Law Firm or Organization Name": representative1_law_firm_or_organization_name
+    maxlength: 71
+    required: False
+---
+id: Attorney or Representative Address
+question: |
+  Attorney or Representative Information
+fields:
+  - "Street Address": representative1_address_line_one
+    maxlength: 54
+  - "Unit": representative1_address_unit
+    maxlength: 27
+    required: False
+  - "City": representative1_address_city
+    maxlength: 36
+  - "State": representative1_address_state
     maxlength: 4
-  - "Representative Address Zip Code": representative1_address_zip
+  - "Zip Code": representative1_address_zip
     maxlength: 28
-  - "Representative Phone Number:": representative1_phone_number
-    maxlength: 14
-  - "Representative Fax:": representative1_fax
-    maxlength: 13
-  - "Representative Email": representative1_email
-    maxlength: 38
-  - "Check here if new address:": is_new_address
+  - "This is a New Address": is_new_address
     datatype: yesno
 ---
-id: Indicate Type of Appearance
+id: Attorney or Representative Communication
 question: |
-  Indicate Type of Appearance
-subquestion: |
-  You must designate primary or non-primary unless you are appearing in an “on behalf of” capacity for another attorney for a specific hearing. Only the primary attorney/representative will receive mailings from the Immigration Court. All attorneys/representatives regardless of type of appearance are practitioners of record and are individually responsible as representatives for the respondent. Circumstances may arise that require the Immigration Court to designate a primary and/or switch service of mailings from the primary to a non-primary.
+  Attorney or Representative Information
 fields:
-  - "Are you the primary attorney or representative:": is_primary_attorney_or_represenative
-    datatype: yesno
-  - "Are you the non-primary attorney or representative:": is_non_primary_attorney_or_representative
-    datatype: yesno
-  - "Are you acting on behalf of an attorney for this hearing?": is_on_behalf_of_attorney
-    datatype: yesno
-  - "If acting on behalf of an attorney, fill in their name:": agent_represented_attorney_name
-    maxlength: 25
-  - "Date of hearing where you are acting on the attorney's behalf": on_behalf_of_date
-    datatype: date
+  - "Phone Number": representative1_phone_number
+    maxlength: 14
     required: False
-  - "I am providing pro bono representation:": is_providing_pro_bono
+  - "Fax": representative1_fax
+    maxlength: 13
+    required: False
+  - "Email": representative1_email
+    maxlength: 38
+    required: False
+---
+id: Attorney or Representative Type of Representation
+question: |
+  Attorney or Representative Type of Representation
+fields:
+  - "I am the primary attorney or representative": is_primary_attorney_or_represenative
     datatype: yesno
-  - "I am not providing pro-bono representation.": is_not_providing_pro_bono
+---
+code: |
+  if not is_primary_attorney_or_represenative:
+    is_non_primary_attorney_or_representative = True
+  else:
+    is_non_primary_attorney_or_representative = False
+---
+id: Attorney or Representative Type of Representation
+question: |
+  Attorney or Representative Type of Representation
+fields:
+  - "I am acting on behalf of an attorney for this hearing": is_on_behalf_of_attorney
     datatype: yesno
+  - "Attorney Name": agent_represented_attorney_name
+    maxlength: 25
+    show if: is_on_behalf_of_attorney
+  - "Date of Hearing": on_behalf_of_date
+    datatype: date
+    show if: is_on_behalf_of_attorney
+---
+id: Attorney or Representative Type of Representation
+question: |
+  Attorney or Representative Type of Representation
+fields:
+  - "I am providing pro bono representation": is_providing_pro_bono
+    datatype: yesno
+---
+code: |
+  if not is_providing_pro_bono:
+    is_not_providing_pro_bono = True
+  else:
+    is_not_providing_pro_bono = False
 ---
 id: Proof of Service
 question: |
   Proof of Service
 fields:
-  - "Proof of Service, date of service if applicable:": service_delivery_date
+  - "Date of service if applicable": service_delivery_date
     datatype: date
     required: False
-  - "Name of person delivering or sending copy to DHS (U.S. Immigration and Customs Enforcement – ICE):": service_attorney_name
+  - "Name of person delivering or sending copy to DHS (U.S. Immigration and Customs Enforcement – ICE)": agent1_name
     maxlength: 22
     required: False
-  - "Address copy of this form was delivered to:": dhs_address
+  - "Address that a copy of this form was delivered to": dhs_address
     maxlength: 40
     required: False
-  - "No service needed. I electronically filed this document, and the opposing party is participating in ECAS:": is_electronically_filed
+  - "No service needed. I electronically filed this document, and the opposing party is participating in ECAS": is_electronically_filed
     datatype: yesno
+    required: False
 ---
 id: Additional Information
 question: |
-  Additional Information:
+  Additional Information
 fields:
-  - "Additional Information: If you are filing this form as a reputable individual as defined in 8 C.F.R. § 1292.1(a)(3), please provide a statement below how you meet that criteria, including that you are appearing on an individual basis at the request of the person entitled to representation and describing your pre-existing relationship or connection to that person:": additional_information
+  - "Additional Information": additional_information
+    help: |
+      If you are filing this form as a reputable individual as defined in 8 C.F.R. § 1292.1(a)(3), 
+      please provide a statement here how you meet that criteria, including that you are appearing on 
+      an individual basis at the request of the person entitled to representation and describing your 
+      pre-existing relationship or connection to that person
     input type: area
     maxlength: 534
     required: False
@@ -341,11 +403,17 @@ subquestion: |
 continue button field: form_eoir28_omb11250006_preview_question    
 ---
 code: |
-  signature_fields = ['attorneys[0].signature', 'proof_of_service_signature']
+  signature_fields = ['representative1_signature', 'agent1_signature']
+  if representative1_signature:
+    representative1_signature_date = today()
 ---
 question: |
-  Proof of service signature, sign below
-signature: proof_of_service_signature
+  Attorney or Representative Signature, sign below
+signature: representative1_signature
+---
+question: |
+  Service Agent Signature, sign below
+signature: agent1_signature
 ---
 code: |
   # This is a placeholder for the addresses that will be searched
@@ -359,263 +427,225 @@ event: review_form_eoir28_omb11250006
 question: |
   Review your answers
 review:
-  - Edit: users.revisit
+  - Edit: party1_name_first
     button: |
-      **Users**
-
-      % for item in users:
-        * ${ item }
-      % endfor
+      **First Name**:
+      ${ party1_name_first }
+  - Edit: party1_name_middle_initial
+    button: |
+      **Middle Initial**:
+      ${ party1_name_middle_initial }
+  - Edit: party1_name_last
+    button: |
+      **Last Name**:
+      ${ party1_name_last }
   - Edit: alien_number
     button: |
       **Alien Number**:
       ${ alien_number }
+  - Edit: party1_address_line_one
+    button: |
+      **Street Address**:
+      ${ party1_address_line_one }
+  - Edit: party1_address_unit
+    button: |
+      **Unit**:
+      ${ party1_address_unit }
   - Edit: is_all_proceedings
     button: |
-      **Entry of appearance for all proceedings**:
+      **Is all proceedings**:
       ${ word(yesno(is_all_proceedings)) }
   - Edit: is_custody_and_bond_proceeding
     button: |
-      **Entry of appearance for only custody and bond proceeding**:
+      **Is custody and bond proceeding**:
       ${ word(yesno(is_custody_and_bond_proceeding)) }
+  - Edit: party1_address_city
+    button: |
+      **City**:
+      ${ party1_address_city }
+  - Edit: party1_address_zip
+    button: |
+      **Zip Code**:
+      ${ party1_address_zip }
+  - Edit: party1_address_state
+    button: |
+      **Represented Party State**:
+      ${ party1_address_state }
   - Edit: is_all_but_custody_and_bond_proceeding
     button: |
-      **Entry of appearance for all except custody and bond proceeding**:
+      **Is all but custody and bond proceeding**:
       ${ word(yesno(is_all_but_custody_and_bond_proceeding)) }
   - Edit: is_attorney
     button: |
-      **I am an attorney eligible to practice law in, and a member in good standing of, the bar of the highest court(s) of the following states(s), possession(s), territory(ies), commonwealth(s), or the District of Columbia (use additional space on reverse side if necessary), and I am not subject to any order disbarring, suspending, enjoining, restraining or otherwise restricting me in the practice of law in any jurisdiction (if subject to such an order, do not check this box and explain in additional information section).**:
+      **Eligible Attorney**:
       ${ word(yesno(is_attorney)) }
-  - Edit: courts.revisit
+  - Edit: full_court_name
     button: |
-      **Courts**
-
-      % for item in courts:
-        * ${ item }
-      % endfor
+      **Full Name of Court**:
+      ${ full_court_name }
   - Edit: bar_number
     button: |
       **Bar Number (if applicable)**:
       ${ bar_number }
   - Edit: is_accredited_representative
     button: |
-      **I am a representative accredited to appear before the Executive Office for Immigration Review as defined in 8 C.F.R. § 1292.1(a)(4)**:
+      **Accredited Representative**:
       ${ word(yesno(is_accredited_representative)) }
   - Edit: represented_organization
     button: |
-      **Represented organization if accredited representative defined in 8 C.F.R. § 1292.1(a)(4):**:
+      **Represented organization if accredited representative defined in 8 C.F.R. § 1292.1(a)(4)**:
       ${ represented_organization }
   - Edit: is_law_student_or_graduate
     button: |
-      **I am a law student or law graduate of an accredited U.S. law school as defined in 8 C.F.R. § 1292.1(a)(2):**:
+      **Law Student or Graduate**:
       ${ word(yesno(is_law_student_or_graduate)) }
   - Edit: is_reputable_individual
     button: |
-      **I am a reputable individual as defined in 8 C.F.R. § 1292.1(a)(3) and I am appearing without direct or indirect renumeration. I am providing further information in the Additional Information section:**:
+      **Reputable Individual**:
       ${ word(yesno(is_reputable_individual)) }
   - Edit: represented_country
     button: |
-      **If an accredited foreign government official, I am from:**:
+      **If an accredited foreign government official, I am from**:
       ${ represented_country }
   - Edit: is_foreign_official
     button: |
-      **I am an accredited foreign government official, as defined in 8 C.F.R. § 1291.1(a)(5):**:
+      **Accredited Foreign Government Official**:
       ${ word(yesno(is_foreign_official)) }
   - Edit: is_authorized_to_practice
     button: |
-      **I am a person who was authorized to practice on December 23, 1952, under 8 C.F.R. § 1292.1(b):**:
+      **Authorized to practice on December 23, 1952**:
       ${ word(yesno(is_authorized_to_practice)) }
   - Edit: is_entered_as_attorney
     button: |
-      **I hereby enter my appearance as attorney or representative for, and at the request of, the party named above:**:
+      **I hereby enter my appearance as attorney or representative for, and at the request of, the party named above**:
       ${ word(yesno(is_entered_as_attorney)) }
   - Edit: is_ordered_qualified_representative
     button: |
-      **EOIR has ordered the provision of a Qualified Representative for the party named abov e and I appear in that capacity:**:
+      **EOIR has ordered the provision of a Qualified Representative for the party named above and I appear in that capacity**:
       ${ word(yesno(is_ordered_qualified_representative)) }
-  - Edit: attorneys.revisit
+  - Edit: representative1_signature
     button: |
-      **Attorneys**
-
-      % for item in attorneys:
-        * ${ item }
-      % endfor
+      **representative1_signature**:
+      ${ representative1_signature }
   - Edit: eoir_id
     button: |
       **EOIR ID Number**:
       ${ eoir_id }
-  - Edit: signature1_date
+  - Edit: representative1_signature_date
     button: |
       **Date of Representative Signature**:
-      ${ signature1_date }
+      ${ representative1_signature_date }
   - Edit: representative1_name_middle_initial
     button: |
-      **Representative Middle Initial**:
+      **Middle Initial**:
       ${ representative1_name_middle_initial }
   - Edit: representative1_name_last
     button: |
-      **Representative Last Name**:
+      **Last Name**:
       ${ representative1_name_last }
   - Edit: representative1_name_first
     button: |
-      **Representative First Name**:
+      **First Name**:
       ${ representative1_name_first }
-  - Edit: law_firm_or_organization
+  - Edit: representative1_law_firm_or_organization_name
     button: |
-      **Law firm or Organization**:
-      ${ law_firm_or_organization }
+      **Law Firm or Organization Name**:
+      ${ representative1_law_firm_or_organization_name }
   - Edit: representative1_address_unit
     button: |
-      **Representative Address Unit**:
+      **Unit**:
       ${ representative1_address_unit }
   - Edit: representative1_address_line_one
     button: |
-      **Representative Address Number and Street**:
+      **Street Address**:
       ${ representative1_address_line_one }
   - Edit: representative1_address_city
     button: |
-      **Representative Address City**:
+      **City**:
       ${ representative1_address_city }
   - Edit: representative1_address_state
     button: |
-      **Representative Address State**:
+      **State**:
       ${ representative1_address_state }
   - Edit: representative1_address_zip
     button: |
-      **Representative Address Zip Code**:
+      **Zip Code**:
       ${ representative1_address_zip }
   - Edit: representative1_phone_number
     button: |
-      **Representative Phone Number:**:
+      **Phone Number**:
       ${ representative1_phone_number }
   - Edit: representative1_fax
     button: |
-      **Representative Fax:**:
+      **Fax**:
       ${ representative1_fax }
   - Edit: representative1_email
     button: |
-      **Representative Email**:
+      **Email**:
       ${ representative1_email }
   - Edit: is_new_address
     button: |
-      **Check here if new address:**:
+      **Is New Address?**:
       ${ word(yesno(is_new_address)) }
-  - Edit: is_primary_attorney_or_represenative
-    button: |
-      **Are you the primary attorney or representative:**:
-      ${ word(yesno(is_primary_attorney_or_represenative)) }
   - Edit: is_non_primary_attorney_or_representative
     button: |
-      **Are you the non-primary attorney or representative:**:
+      **Are you the non-primary attorney or representative**:
       ${ word(yesno(is_non_primary_attorney_or_representative)) }
-  - Edit: is_on_behalf_of_attorney
+  - Edit: is_primary_attorney_or_represenative
     button: |
-      **Are you acting on behalf of an attorney for this hearing?**:
-      ${ word(yesno(is_on_behalf_of_attorney)) }
+      **Are you the primary attorney or representative**:
+      ${ word(yesno(is_primary_attorney_or_represenative)) }
   - Edit: agent_represented_attorney_name
     button: |
-      **If acting on behalf of an attorney, fill in their name:**:
+      **If acting on behalf of an attorney, fill in their name**:
       ${ agent_represented_attorney_name }
   - Edit: on_behalf_of_date
     button: |
       **Date of hearing where you are acting on the attorney's behalf**:
       ${ on_behalf_of_date }
+  - Edit: is_on_behalf_of_attorney
+    button: |
+      **Are you acting on behalf of an attorney for this hearing?**:
+      ${ word(yesno(is_on_behalf_of_attorney)) }
   - Edit: is_providing_pro_bono
     button: |
-      **I am providing pro bono representation:**:
+      **I am providing pro bono representation**:
       ${ word(yesno(is_providing_pro_bono)) }
   - Edit: is_not_providing_pro_bono
     button: |
-      **I am not providing pro-bono representation.**:
+      **I am not providing pro-bono representation**:
       ${ word(yesno(is_not_providing_pro_bono)) }
   - Edit: service_delivery_date
     button: |
-      **Proof of Service, date of service if applicable:**:
+      **Proof of Service, date of service if applicable**:
       ${ service_delivery_date }
-  - Edit: service_attorney_name
+  - Edit: agent1_name
     button: |
-      **Name of person delivering or sending copy to DHS (U.S. Immigration and Customs Enforcement – ICE):**:
-      ${ service_attorney_name }
+      **Name of person delivering or sending copy to DHS (U.S. Immigration and Customs Enforcement – ICE)**:
+      ${ agent1_name }
   - Edit: dhs_address
     button: |
-      **Address copy of this form was delivered to:**:
+      **Address copy of this form was delivered to**:
       ${ dhs_address }
   - Edit: is_electronically_filed
     button: |
-      **No service needed. I electronically filed this document, and the opposing party is participating in ECAS:**:
+      **No service needed. I electronically filed this document, and the opposing party is participating in ECAS**:
       ${ word(yesno(is_electronically_filed)) }
-  - Edit: proof_of_service_signature
+  - Edit: agent1_signature
     button: |
-      **proof_of_service_signature**:
-      ${ proof_of_service_signature }
+      **agent1_signature**:
+      ${ agent1_signature }
   - Edit: additional_information
     button: |
-      **Additional Information: If you are filing this form as a reputable individual as defined in 8 C.F.R. § 1292.1(a)(3), please provide a statement below how you meet that criteria, including that you are appearing on an individual basis at the request of the person entitled to representation and describing your pre-existing relationship or connection to that person:**:
+      **Additional Information: If you are filing this form as a reputable individual as defined in 8 C.F.R. § 1292.1(a)(3), please provide a statement below how you meet that criteria, including that you are appearing on an individual basis at the request of the person entitled to representation and describing your pre-existing relationship or connection to that person**:
       > ${ single_paragraph(additional_information) }
----
-continue button field: users.revisit
-question: |
-  Edit users
-subquestion: |
-  ${ users.table }
-
-  ${ users.add_action() }
----
-table: users.table
-rows: users
-columns:
-  - Name: |
-      row_item.name.full() if defined("row_item.name.last") else ""
-  - Address: |
-      row_item.address.block() if defined("row_item.address.state") else ""
-edit:
-  - name.last
-  - address.state
-confirm: True
-
----
-continue button field: courts.revisit
-question: |
-  Edit courts
-subquestion: |
-  ${ courts.table }
-
-  ${ courts.add_action() }
----
-table: courts.table
-rows: courts
-columns:
-  - Name: |
-      row_item.name.full() if defined("row_item.name.first") else ""
-edit:
-  - name.first
-confirm: True
-
----
-continue button field: attorneys.revisit
-question: |
-  Edit attorneys
-subquestion: |
-  ${ attorneys.table }
-
-  ${ attorneys.add_action() }
----
-table: attorneys.table
-rows: attorneys
-columns:
-  - Signature: |
-      row_item.signature if defined("row_item.signature") else ""
-edit:
-  - signature
-confirm: True
-
 ---
 id: download form_eoir28_omb11250006
 event: form_eoir28_omb11250006_download
 question: |
   All done
 subquestion: |
-  Thank you ${users}. Your form is ready to download and deliver.
+  Thank you ${representative1_name_first}. Your form is ready to download and deliver.
   
   View, download and send your form below. Click the "Edit answers" button to fix any mistakes.
 
@@ -632,7 +662,7 @@ progress: 100
 # ALDocument objects specify the metadata for each template
 objects:
   - form_eoir28_omb11250006_Post_interview_instructions: ALDocument.using(title="Instructions", filename="form_eoir28_omb11250006_next_steps.docx", enabled=True, has_addendum=False)
-  - form_eoir28_omb11250006_attachment: ALDocument.using(title="Form EOIR-28, OMB#1125-0006", filename="form_eoir28_omb11250006", enabled=True, has_addendum=False, )
+  - form_eoir28_omb11250006_attachment: ALDocument.using(title="Form EOIR28 omb11250006", filename="form_eoir28_omb11250006", enabled=True, has_addendum=False, )
 ---
 # Bundles group the ALDocuments into separate downloads, such as for court and for the user
 objects:
@@ -657,20 +687,20 @@ attachment:
   skip undefined: True
   pdf template file: form_eoir28_omb11250006.pdf
   fields:
-      - "user1_name_first": ${ users[0].name.first }
-      - "user1_name_middle_initial": ${ users[0].name.middle_initial() }
-      - "user1_name_last": ${ users[0].name.last }
+      - "party1_name_first": ${ party1_name_first }
+      - "party1_name_middle_initial": ${ party1_name_middle_initial }
+      - "party1_name_last": ${ party1_name_last }
       - "alien_number": ${ alien_number }
-      - "users1_address_line_one": ${ users[0].address.line_one() }
-      - "user1_address_unit": ${ users[0].address.unit }
+      - "party1_address_line_one": ${ party1_address_line_one }
+      - "party1_address_unit": ${ party1_address_unit }
       - "is_all_proceedings": ${ is_all_proceedings }
       - "is_custody_and_bond_proceeding": ${ is_custody_and_bond_proceeding }
-      - "user1_address_city": ${ users[0].address.city }
-      - "user1_address_zip": ${ users[0].address.zip }
-      - "user1_address_state": ${ users[0].address.state }
+      - "party1_address_city": ${ party1_address_city }
+      - "party1_address_zip": ${ party1_address_zip }
+      - "party1_address_state": ${ party1_address_state }
       - "is_all_but_custody_and_bond_proceeding": ${ is_all_but_custody_and_bond_proceeding }
       - "is_attorney": ${ is_attorney }
-      - "court_name": ${ courts[0] }
+      - "full_court_name": ${ full_court_name }
       - "bar_number": ${ bar_number }
       - "is_accredited_representative": ${ is_accredited_representative }
       - "represented_organization": ${ represented_organization }
@@ -681,13 +711,14 @@ attachment:
       - "is_authorized_to_practice": ${ is_authorized_to_practice }
       - "is_entered_as_attorney": ${ is_entered_as_attorney }
       - "is_ordered_qualified_representative": ${ is_ordered_qualified_representative }
-      - "attorney_signature": ${ attorneys[0].signature_if_final(i) }
+      # It's a signature: test which file version this is; leave empty unless it's the final version)
+      - "representative1_signature": ${ representative1_signature if i == "final" else '' }
       - "eoir_id": ${ eoir_id }
-      - "signature1_date": ${ signature1_date.format() }
+      - "representative1_signature_date": ${ representative1_signature_date.format() }
       - "representative1_name_middle_initial": ${ representative1_name_middle_initial }
       - "representative1_name_last": ${ representative1_name_last }
       - "representative1_name_first": ${ representative1_name_first }
-      - "law_firm_or_organization": ${ law_firm_or_organization }
+      - "representative1_law_firm_or_organization_name": ${ representative1_law_firm_or_organization_name }
       - "representative1_address_unit": ${ representative1_address_unit }
       - "representative1_address_line_one": ${ representative1_address_line_one }
       - "representative1_address_city": ${ representative1_address_city }
@@ -697,20 +728,17 @@ attachment:
       - "representative1_fax": ${ representative1_fax }
       - "representative1_email": ${ representative1_email }
       - "is_new_address": ${ is_new_address }
-      - "is_primary_attorney_or_represenative": ${ is_primary_attorney_or_represenative }
       - "is_non_primary_attorney_or_representative": ${ is_non_primary_attorney_or_representative }
-      - "is_on_behalf_of_attorney": ${ is_on_behalf_of_attorney }
+      - "is_primary_attorney_or_represenative": ${ is_primary_attorney_or_represenative }
       - "agent_represented_attorney_name": ${ agent_represented_attorney_name }
       - "on_behalf_of_date": ${ on_behalf_of_date.format() }
+      - "is_on_behalf_of_attorney": ${ is_on_behalf_of_attorney }
       - "is_providing_pro_bono": ${ is_providing_pro_bono }
       - "is_not_providing_pro_bono": ${ is_not_providing_pro_bono }
       - "service_delivery_date": ${ service_delivery_date.format() }
-      - "service_attorney_name": ${ service_attorney_name }
+      - "agent1_name": ${ agent1_name }
       - "dhs_address": ${ dhs_address }
       - "is_electronically_filed": ${ is_electronically_filed }
       # It's a signature: test which file version this is; leave empty unless it's the final version)
-      - "proof_of_service_signature": ${ proof_of_service_signature if i == "final" else '' }
+      - "agent1_signature": ${ agent1_signature if i == "final" else '' }
       - "additional_information": ${ additional_information }
-
-
-
