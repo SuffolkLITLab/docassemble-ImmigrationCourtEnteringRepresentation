@@ -1,14 +1,15 @@
 ---
 include:
   - docassemble.AssemblyLine:assembly_line.yml
+  - docassemble.LITLabTheme:main.yml
 ---
 metadata:
   title: >-
-    Form EOIR28 omb11250006
+    Notice of Entry as Attorney or Representative for Immigration Court
   short title: >-
-    Form EOIR28 omb11250006
+    Notice of Entry as Attorney or Representative for Immigration Court
   description: |-
-    This interview helps someone file a Notice of Entry of Appearance of Attorney or Representative Before the Immigration Court.
+    This interview helps a someone representing a party in an immigration case file a Notice of Entry of Appearance of Attorney or Representative Before the Immigration Court.
   can_I_use_this_form: |
     If you are a attorney or representative for an immigration court case, you can use this interview to fill a form notifying the court of your entry into the case.
   before_you_start: |
@@ -19,6 +20,7 @@ metadata:
     1. Name, Address, and Alien number of Represented Party
     1. EOIR ID number
     1. Information regarding the type of representation to be provided
+    1. Your personal and professional information as the Attorney or Representative
     
     When you are finished, you will need to:
     
@@ -93,20 +95,27 @@ code: |
   party1_address_line_one
   is_all_proceedings
   is_attorney
+  if do_further_information:
+    if is_attorney:
+      full_court_name
+    elif is_accredited_representative:
+      represented_organization
+    elif is_foreign_official:
+      represented_country
   set_progress(20)
   is_entered_as_attorney
   representative1_name_middle_initial
   representative1_address_line_one
   representative1_phone_number
-  is_non_primary_attorney_or_representative
-  is_on_behalf_of_attorney
   is_providing_pro_bono
+  attorney_rep_variable
+  if is_on_behalf_of_attorney:
+    agent_represented_attorney_name
   set_progress(40)
-  service_delivery_date
+  if do_service:
+    service_delivery_date
   additional_information
-  representative1_signature
   set_progress(60)
-  agent1_signature
   interview_order_form_eoir28_omb11250006 = True
 ---
 ###################### Main order ######################
@@ -128,29 +137,26 @@ code: |
       },
   )
   form_eoir28_omb11250006_preview_question
-  basic_questions_signature_flow    
-  representative1_signature
-  agent1_signature
+  basic_questions_signature_flow
   form_eoir28_omb11250006_download
 ---
 id: Form_EOIR28_omb11250006
 continue button field: form_eoir28_omb11250006_intro
 question: |
-  Form EOIR28 omb11250006
+  Notice of Entry as Attorney or Representative for Immigration Court
 subquestion: |
   This interview will help you file a Notice of Entry of Appearance of Attorney or Representative Before the Immigration Court.
-  
-  Before you get started, please gather:
-  
-  1. Name, Address, and Alien number of Represented Party
-  1. EOIR ID number
-  1. Information regarding the type of representation to be provided
-  
-  When you are finished, you will need to:
-  
-  1. File the document through the online case portal or other appropriate means
-
-  If you are a attorney or representative for an immigration court case, you can use this interview to fill a form notifying the court of your entry into the case.
+    
+    Before you get started, please gather:
+    
+    1. Name, Address, and Alien number of Represented Party
+    1. EOIR ID number
+    1. Information regarding the type of representation to be provided
+    1. Your personal and professional information as the Attorney or Representative
+    
+    When you are finished, you will need to:
+    
+    1. File the document through the online case portal or other appropriate means
 
   Most people take about 20 minutes to complete this interview.
 ---
@@ -192,83 +198,236 @@ id: Entry of Appearance
 question: |
   Entry of Appearance
 subquestion: |
-  Select one for the purpose of this hearing
+  Select the proceedings for which you are entering  (please select one of the following)
 fields:
-  - "Is all proceedings": is_all_proceedings
-    datatype: yesno
-  - "Is custody and bond proceeding": is_custody_and_bond_proceeding
-    datatype: yesno
-  - "Is all but custody and bond proceeding": is_all_but_custody_and_bond_proceeding
-    datatype: yesno
+  - Select One: proceeding_variable
+    datatype: radio
+    required: True
+    choices:
+      - All Proceedings: all_proceedings
+      - Custody and Bond Proceedings Only: custody_and_bond
+      - All Proceedings Other Than Custody And Bond Proceedings: not_custody_and_bond
+---
+code: |
+  if proceeding_variable == "all_proceedings":
+    is_all_proceedings = True
+    is_custody_and_bond_proceeding = False
+    is_all_but_custody_and_bond_proceeding = False
+  elif proceeding_variable == "custody_and_bond":
+    is_all_proceedings = False
+    is_custody_and_bond_proceeding = True
+    is_all_but_custody_and_bond_proceeding = False
+  elif proceeding_variable == "not_custody_and_bond":
+    is_all_proceedings = False
+    is_custody_and_bond_proceeding = False
+    is_all_but_custody_and_bond_proceeding = True
+  else:
+    is_all_proceedings = False
+    is_custody_and_bond_proceeding = False
+    is_all_but_custody_and_bond_proceeding = False
 ---
 id: Attorney or Representative Qualification
 question: |
   Attorney or Representative Qualification
 subquestion: |
-  (Select one of the following and fill out applicable information)
+  Select one of the following basises that qualifies you as a representative or attorney for this hearing.
 fields:
-  - "Eligible Attorney": is_attorney
-    help: |
-      I am an attorney eligible to practice law in, and a member in good standing of, the bar of the 
-      highest court(s) of the following states(s), possession(s), territory(ies), commonwealth(s), or 
-      the District of Columbia (use additional space on reverse side if necessary), and I am not 
-      subject to any order disbarring, suspending, enjoining, restraining or otherwise restricting me 
-      in the practice of law in any jurisdiction (if subject to such an order, do not check this box 
-      and explain in additional information section).
-    datatype: yesno
+  - Select One That Describes You: representation_variable
+    datatype: radio
+    choices:
+      - "Eligible Attorney": rep_attorney
+        help: |
+          I am an attorney eligible to practice law in, and a member in good standing of, the bar of 
+          the highest court(s) of the following states(s), possession(s), territory(ies), 
+          commonwealth(s), or the District of Columbia, and I am not subject to any order disbarring, 
+          suspending, enjoining, restraining or otherwise restricting me in the practice of law in 
+          any jurisdiction (if subject to such an order, do not check this box and explain in 
+          additional information 
+          section).
+      - "Accredited Representative": rep_representative
+        help: |
+          I am a representative accredited to appear before the Executive Office for Immigration Review as defined in 8 C.F.R. § 1292.1(a)(4)
+      - "Law Student or Graduate": rep_student
+        help: |
+          I am a law student or law graduate of an accredited U.S. law school as defined in 8 C.F.R. § 1292.1(a)(2)
+      - "Reputable Individual": rep_individual
+        help: |
+          I am a reputable individual as defined in 8 C.F.R. § 1292.1(a)(3) and I am appearing without direct or indirect renumeration. I am providing further information in the Additional Information section
+      - "Accredited Foreign Government Official": rep_official
+        help: |
+          I am an accredited foreign government official, as defined in 8 C.F.R. § 1291.1(a)(5)
+      - "Authorized to practice on December 23, 1952": rep_practice
+        help: |
+          I am a person who was authorized to practice on December 23, 1952, under 8 C.F.R. § 1292.1(b)
+---
+code: |
+  if representation_variable == "rep_attorney":
+    is_attorney = True
+    is_accredited_representative = False
+    is_law_student_or_graduate = False
+    is_reputable_individual = False
+    is_foreign_official = False
+    is_authorized_to_practice = False
+    do_further_information = True
+  elif representation_variable == "rep_representative":
+    is_attorney = False
+    is_accredited_representative = True
+    is_law_student_or_graduate = False
+    is_reputable_individual = False
+    is_foreign_official = False
+    is_authorized_to_practice = False
+    do_further_information = True
+  elif representation_variable == "rep_student":
+    is_attorney = False
+    is_accredited_representative = False
+    is_law_student_or_graduate = True
+    is_reputable_individual = False
+    is_foreign_official = False
+    is_authorized_to_practice = False
+    do_further_information = False
+  elif representation_variable == "rep_individual":
+    is_attorney = False
+    is_accredited_representative = False
+    is_law_student_or_graduate = False
+    is_reputable_individual = True
+    is_foreign_official = False
+    is_authorized_to_practice = False
+    do_further_information = False
+  elif representation_variable == "rep_official":
+    is_attorney = False
+    is_accredited_representative = False
+    is_law_student_or_graduate = False
+    is_reputable_individual = False
+    is_foreign_official = True
+    is_authorized_to_practice = False
+    do_further_information = True
+  elif representation_variable == "rep_practice":
+    is_attorney = False
+    is_accredited_representative = False
+    is_law_student_or_graduate = False
+    is_reputable_individual = False
+    is_foreign_official = False
+    is_authorized_to_practice = True
+    do_further_information = False
+  else:
+    is_attorney = False
+    is_accredited_representative = False
+    is_law_student_or_graduate = False
+    is_reputable_individual = False
+    is_foreign_official = False
+    is_authorized_to_practice = False
+    do_further_information = False
+---
+id: Qualification Information
+question: |
+  Provide further Information on your Qualifications
+fields:
   - "Full Name of Court": full_court_name
+    help: |
+      Provide the Official Name of the Immigration Court where the hearing is scheduled
     maxlength: 28
     required: False
-    show if: is_attorney
+    show if:
+      code: |
+        is_attorney
   - "Bar Number (if applicable)": bar_number
+    help: |
+      Provide your bar number if you are an eligible attorney
     maxlength: 22
     required: False
-    show if: is_attorney
-  - "Accredited Representative": is_accredited_representative
-    datatype: yesno
-    help: |
-      I am a representative accredited to appear before the Executive Office for Immigration Review 
-      as defined in 8 C.F.R. § 1292.1(a)(4)
+    show if:
+      code: |
+        is_attorney
   - "Represented Organization": represented_organization
     help: |
-      Represented organization if accredited representative defined in 8 C.F.R. § 1292.1(a)(4)
+      Provide the name of your organization if you are an accredited representative defined in 8 C.F.R. § 1292.1(a)(4)
     maxlength: 45
     required: False
-    show if: is_accredited_representative
-  - "Law Student or Graduate": is_law_student_or_graduate
-    help: |
-      I am a law student or law graduate of an accredited U.S. law school as defined in 8 C.F.R. § 
-      1292.1(a)(2)
-    datatype: yesno
-  - "Reputable Individual": is_reputable_individual
-    help: |
-      I am a reputable individual as defined in 8 C.F.R. § 1292.1(a)(3) and I am appearing without 
-      direct or indirect renumeration. I am providing further information in the Additional 
-      Information section
-    datatype: yesno
-  - "Accredited Foreign Government Official": is_foreign_official
-    help: |
-      I am an accredited foreign government official, as defined in 8 C.F.R. § 1291.1(a)(5)
-    datatype: yesno
+    show if:
+      code: |
+        is_accredited_representative
   - "Country": represented_country
+    help: |
+      Provide the name of your country if you are an accredited government official, as defined in 8 C.F.R. § 1291.1(a)(5)
     maxlength: 16
     required: False
-    show if: is_foreign_official
-  - "Authorized to practice on December 23, 1952": is_authorized_to_practice
-    help: |
-      I am a person who was authorized to practice on December 23, 1952, under 8 C.F.R. § 1292.1(b)
-    datatype: yesno
+    show if:
+      code: |
+        is_foreign_official
+---
+code: |
+  if not is_attorney:
+    full_court_name = ""
+    bar_number = ""
+  elif not is_accredited_representative:
+    represented_organization = ""
+  elif not is_foreign_official:
+    represented_country = ""
 ---
 id: Attorney or Representative Entrance
 question: |
-  Attorney or Representative Entrance
+  Further Representation Information
+subquestion: |
+  Specify whether you are an EOIR ordered Qualified Representative, or entered as an attorney or representative for the named party.  Also provide the EOIR ID number and confirm if you are providing this representation pro bono.
 fields:
-  - "I hereby enter my appearance as attorney or representative for the party named": is_entered_as_attorney
-    datatype: yesno
-  - "EOIR has ordered the provision of a Qualified Representative for the party named and I appear in that capacity": is_ordered_qualified_representative
-    datatype: yesno
+  - Select One: attorney_or_rep_variable
+    datatype: radio
+    choices:
+      - "Entered as Attorney or Representative for the Party named": entered_as_rep
+      - "Appearing as EOIR Ordered Qualified Representative for the Party Named": eoir_appointed
   - "EOIR ID Number": eoir_id
-    maxlength: 36
+  - "Representation is Pro Bono": is_providing_pro_bono
+    datatype: yesno
+---
+code: |
+  if is_providing_pro_bono:
+    is_not_providing_pro_bono = False
+  else:
+    is_not_providing_pro_bono = True
+  if attorney_or_rep_variable == "entered_as_rep":
+    is_entered_as_attorney = True
+    is_ordered_qualified_representative = False
+  elif attorney_or_rep_variable == "eoir_appointed":
+    is_entered_as_attorney = False
+    is_ordered_qualified_representative = True
+---
+id: Attorney or Representative Role
+question: |
+  Further Representation Information
+subquestion: |
+  Select whether you are the primary, non-primary, or appearing on behalf of another attorney/representative.
+fields:
+  - Select one: attorney_rep_variable
+    datatype: radio
+    help: |
+      You must designate primary or non-primary unless you are appearing in an “on behalf of” capacity for another attorney for a specific hearing. Only the primary attorney/representative will receive mailings from the Immigration Court. All attorneys/representatives regardless of type of appearance are practitioners of record and are individually responsible as representatives for the respondent. Circumstances may arise that require the Immigration Court to designate a primary and/or switch service of mailings from the primary to a non-primary.
+    choices:
+      - "Primary Attorney or Representative": primary_attorney
+      - "Non-primary Attorney or Representative": non_primary_attorney
+      - "Acting on Behalf of an Attorney for this Hearing": acting_on_behalf
+---
+code: |
+  if attorney_rep_variable == "primary_attorney":
+    is_primary_attorney_or_represenative = True
+    is_non_primary_attorney_or_representative = False
+    is_on_behalf_of_attorney = False
+  elif attorney_rep_variable == "acting_on_behalf":
+    is_primary_attorney_or_represenative = False
+    is_non_primary_attorney_or_representative = False
+    is_on_behalf_of_attorney = True
+  elif attorney_rep_variable == "non_primary_attorney":
+    is_primary_attorney_or_represenative = False
+    is_non_primary_attorney_or_representative = True
+    is_on_behalf_of_attorney = False
+---
+id: Acting on Behalf of Attorney
+question: |
+  Identify the Attorney You Are Acting on Behalf of for this Hearing
+fields:
+  - "Attorney Name": agent_represented_attorney_name
+    maxlength: 25
+  - "Date of Hearing": on_behalf_of_date
+    datatype: date
 ---
 id: Attorney or Representative Name
 question: |
@@ -316,44 +475,10 @@ fields:
     maxlength: 38
     required: False
 ---
-id: Attorney or Representative Type of Representation
+id: Service Question
 question: |
-  Attorney or Representative Type of Representation
-fields:
-  - "I am the primary attorney or representative": is_primary_attorney_or_represenative
-    datatype: yesno
----
-code: |
-  if not is_primary_attorney_or_represenative:
-    is_non_primary_attorney_or_representative = True
-  else:
-    is_non_primary_attorney_or_representative = False
----
-id: Attorney or Representative Type of Representation
-question: |
-  Attorney or Representative Type of Representation
-fields:
-  - "I am acting on behalf of an attorney for this hearing": is_on_behalf_of_attorney
-    datatype: yesno
-  - "Attorney Name": agent_represented_attorney_name
-    maxlength: 25
-    show if: is_on_behalf_of_attorney
-  - "Date of Hearing": on_behalf_of_date
-    datatype: date
-    show if: is_on_behalf_of_attorney
----
-id: Attorney or Representative Type of Representation
-question: |
-  Attorney or Representative Type of Representation
-fields:
-  - "I am providing pro bono representation": is_providing_pro_bono
-    datatype: yesno
----
-code: |
-  if not is_providing_pro_bono:
-    is_not_providing_pro_bono = True
-  else:
-    is_not_providing_pro_bono = False
+  Do you want to fill out service information?
+yesno: do_service
 ---
 id: Proof of Service
 question: |
@@ -403,13 +528,22 @@ subquestion: |
 continue button field: form_eoir28_omb11250006_preview_question    
 ---
 code: |
-  signature_fields = ['representative1_signature', 'agent1_signature']
-  if representative1_signature:
-    representative1_signature_date = today()
+  if do_service:
+    signature_fields = ['representative1_signature', 'agent1_signature']
+  else:
+    signature_fields = ['representative1_signature']
 ---
 question: |
   Attorney or Representative Signature, sign below
 signature: representative1_signature
+---
+code: |
+  if representative1_signature == "":
+    is_signing = False
+  else:
+    is_signing = True
+  signature_date if is_signing else ""
+  representative1_signature_date = signature_date
 ---
 question: |
   Service Agent Signature, sign below
@@ -714,7 +848,7 @@ attachment:
       # It's a signature: test which file version this is; leave empty unless it's the final version)
       - "representative1_signature": ${ representative1_signature if i == "final" else '' }
       - "eoir_id": ${ eoir_id }
-      - "representative1_signature_date": ${ representative1_signature_date.format() }
+      - "representative1_signature_date": ${ signature_date.format() }
       - "representative1_name_middle_initial": ${ representative1_name_middle_initial }
       - "representative1_name_last": ${ representative1_name_last }
       - "representative1_name_first": ${ representative1_name_first }
