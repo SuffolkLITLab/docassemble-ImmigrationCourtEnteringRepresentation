@@ -437,6 +437,7 @@ fields:
     maxlength: 34
   - "Middle Initial": representative1_name_middle_initial
     maxlength: 11
+    required: False
   - "Last Name": representative1_name_last
     maxlength: 36
   - "Law Firm or Organization Name": representative1_law_firm_or_organization_name

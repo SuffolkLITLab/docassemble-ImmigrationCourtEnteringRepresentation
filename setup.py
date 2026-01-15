@@ -44,7 +44,7 @@ def find_package_data(where='.', package='', exclude=standard_exclude, exclude_d
     return out
 
 setup(name='docassemble.ImmigrationCourtEnteringRepresentation',
-      version='1.0',
+      version='1.1.0',
       description=('Form EOIR-28, OMB#1125-0006'),
       long_description='# docassemble.FormEoir28Omb11250006\r\n\r\nForm EOIR-28, OMB#1125-0006\r\n\r\n## Author\r\n\r\npeter.samson@su.suffolk.edu\r\n\r\n',
       long_description_content_type='text/markdown',
