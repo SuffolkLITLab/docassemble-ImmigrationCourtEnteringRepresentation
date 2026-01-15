@@ -7,53 +7,64 @@ metadata:
   title: >-
     Notice of Entry as Attorney or Representative for Immigration Court
   short title: >-
-    Notice of Entry as Attorney or Representative for Immigration Court
+    Immigration Notice of Entry
   description: |-
-    This interview helps a someone representing a party in an immigration case file a Notice of Entry of Appearance of Attorney or Representative Before the Immigration Court.
+    This interview helps an authorized attorney or representative fill out Form EOIR-28 to enter an appearance in an Immigration Court
+    case.
+
+    You need this form if you will represent someone in a hearing in the Immigration Court.
   can_I_use_this_form: |
-    If you are a attorney or representative for an immigration court case, you can use this interview to fill a form notifying the court of your entry into the case.
+    Use this interview if you are allowed to represent someone in an Immigration Court case. This includes attorneys, accredited representatives, law students or graduates, reputable individuals without pay, accredited foreign government officials, and people authorized to practice before December 23, 1952.
+
+    Do not use this interview for cases before the Board of Immigration Appeals (BIA).
   before_you_start: |
-    This interview will help you file a Notice of Entry of Appearance of Attorney or Representative Before the Immigration Court.
-    
-    Before you get started, please gather:
-    
-    1. Name, Address, and Alien number of Represented Party
-    1. EOIR ID number
-    1. Information regarding the type of representation to be provided
-    1. Your personal and professional information as the Attorney or Representative
-    
-    When you are finished, you will need to:
-    
-    1. File the document through the online case portal or other appropriate means
+    If you plan to file in ECAS, make sure you are registered with the EOIR eRegistry.
+
+    Gather:
+
+    1. The represented party’s name, address, and A-number
+    1. The Immigration Court location
+    1. Your EOIR ID number
+    1. Your contact and firm/organization information
+
+    When you are finished, you will need to sign and file the form with the Immigration Court.
+  when_you_are_finished: |
+    Download the completed form, sign it, and file it with the Immigration Court. Keep a copy for your records. If you did not file in ECAS with the opposing party participating, you must also serve a copy on DHS.
+  landing_page_url: >-
+    https://github.com/SuffolkLITLab/docassemble-ImmigrationCourtEnteringRepresentation
   maturity: production
   estimated_completion_minutes: 20
   estimated_completion_delta: 5
   LIST_topics: 
     - "GO-00-00-00-00"
+    - IM-10-00-00-00
   tags:
     - "GO-00-00-00-00"
+    - IM-10-00-00-00
   authors:
     - Peter Samson
   original_form:
-    - https://www.justice.gov/eoir/file/639746/dl
-  original_form_published_on: ""
+    - https://www.justice.gov/media/1191376/dl?inline=
+  original_form_published_on: "2025-02-01"
   help_page_url: >-
-    https://www.justice.gov/eoir
+    https://www.justice.gov/eoir/Enter-an-Appearance
   help_page_title: >-
-    Executive Office for Immigration Review
+    EOIR: Enter an Appearance
   allowed_courts: 
     - "Immigration Court"
   typical_role: "na"
   al_weaver_version: "1.11.0"
-  generated_on: "2025-10-01"
+  generated_on: "2026-01-15"
   languages:
     - en
-  jurisdiction: NAM-US-US+MA
-  review_date: 2025-10-01
+  jurisdiction: NAM-US-US
+  review_date: 2026-12-31
   form_titles:
-    - Form EOIR28 omb11250006
-  form_numbers: []
+    - Notice of Entry of Appearance as Attorney or Representative Before the Immigration Court
+  form_numbers:
+    - EOIR-28
   update_notes: |
+    Metadata and plain-language review updated on 2026-01-15.
 ---
 code: |
   # This controls the default country and list of states in address field questions
@@ -64,7 +75,7 @@ code: |
   AL_DEFAULT_STATE = "MA"
 ---
 code: |
-  github_repo_name =  'docassemble-FormEoir28Omb11250006'
+  github_repo_name =  'docassemble-ImmigrationCourtEnteringRepresentation'
 ---
 code: |
   interview_short_title = "File a Notice of Entry of Appearance of Attorney or Representative Before the Immigration Court"
@@ -91,6 +102,8 @@ code: |
   nav.set_section("review_form_eoir28_omb11250006")
   user_role = "na"
   user_ask_role = "na"
+  if not (is_immigration_court_case and is_authorized_representative):
+    not_eligible_notice_of_entry
   party1_name_first
   party1_address_line_one
   is_all_proceedings
@@ -143,22 +156,55 @@ code: |
 id: Form_EOIR28_omb11250006
 continue button field: form_eoir28_omb11250006_intro
 question: |
-  Notice of Entry as Attorney or Representative for Immigration Court
+  Notice of Entry of Appearance (Form EOIR-28)
 subquestion: |
-  This interview will help you file a Notice of Entry of Appearance of Attorney or Representative Before the Immigration Court.
-    
-    Before you get started, please gather:
-    
-    1. Name, Address, and Alien number of Represented Party
-    1. EOIR ID number
-    1. Information regarding the type of representation to be provided
-    1. Your personal and professional information as the Attorney or Representative
-    
-    When you are finished, you will need to:
-    
-    1. File the document through the online case portal or other appropriate means
+  This interview helps you fill out Form EOIR-28 to enter an appearance in an Immigration Court case.
+
+  Before you start, gather:
+
+  1. The represented party’s name, address, and A-number
+  1. The Immigration Court location
+  1. Your EOIR ID number
+  1. Your contact and firm/organization information
+
+  When you are finished, you will sign and file the form with the Immigration Court.
 
   Most people take about 20 minutes to complete this interview.
+---
+id: Can I file a notice of entry
+question: |
+  Can I file a notice of entry?
+subquestion: |
+  Use this form only for cases in Immigration Court. If your case is before the Board of Immigration Appeals (BIA), use Form EOIR-27 instead.
+fields:
+  - "Is this for a case in Immigration Court?": is_immigration_court_case
+    datatype: yesnoradio
+  - "Are you an attorney or someone else allowed to represent someone in Immigration Court?": is_authorized_representative
+    datatype: yesnoradio
+    under text: |
+      This includes EOIR-accredited representatives, law students or graduates (with supervision), reputable individuals without pay, accredited foreign government officials, and people authorized to practice before December 23, 1952.
+---
+id: not_eligible_notice_of_entry
+event: not_eligible_notice_of_entry
+question: |
+  Can I file a notice of entry?
+subquestion: |
+  % if not is_immigration_court_case:
+  This form is only for Immigration Court cases. If your case is before the Board of Immigration Appeals (BIA), use Form EOIR-27 instead.
+
+  You can find EOIR forms at:
+  https://www.justice.gov/eoir/list-downloadable-eoir-forms
+  % endif
+  % if not is_authorized_representative:
+
+  This form is for authorized representatives only. If you are not allowed to represent someone in Immigration Court, you should not file Form EOIR-28.
+
+  Learn more about EOIR appearance rules at:
+  https://www.justice.gov/eoir
+  % endif
+buttons:
+  - Start over: restart
+  - Exit: exit
 ---
 id: Represented Party Name
 question: |
@@ -198,7 +244,7 @@ id: Entry of Appearance
 question: |
   Entry of Appearance
 subquestion: |
-  Select the proceedings for which you are entering  (please select one of the following)
+  Which proceedings are you entering?
 fields:
   - Select One: proceeding_variable
     datatype: radio
@@ -230,7 +276,7 @@ id: Attorney or Representative Qualification
 question: |
   Attorney or Representative Qualification
 subquestion: |
-  Select one of the following basises that qualifies you as a representative or attorney for this hearing.
+  Select the basis that qualifies you to represent the party in this case.
 fields:
   - Select One That Describes You: representation_variable
     datatype: radio
@@ -238,8 +284,8 @@ fields:
       - "Eligible Attorney": rep_attorney
         help: |
           I am an attorney eligible to practice law in, and a member in good standing of, the bar of 
-          the highest court(s) of the following states(s), possession(s), territory(ies), 
-          commonwealth(s), or the District of Columbia, and I am not subject to any order disbarring, 
+          the highest courts of the following states, possessions, territories, 
+          commonwealths, or the District of Columbia, and I am not subject to any order disbarring, 
           suspending, enjoining, restraining or otherwise restricting me in the practice of law in 
           any jurisdiction (if subject to such an order, do not check this box and explain in 
           additional information 
@@ -252,7 +298,7 @@ fields:
           I am a law student or law graduate of an accredited U.S. law school as defined in 8 C.F.R. § 1292.1(a)(2)
       - "Reputable Individual": rep_individual
         help: |
-          I am a reputable individual as defined in 8 C.F.R. § 1292.1(a)(3) and I am appearing without direct or indirect renumeration. I am providing further information in the Additional Information section
+          I am a reputable individual as defined in 8 C.F.R. § 1292.1(a)(3) and I am appearing without direct or indirect remuneration. I am providing further information in the Additional Information section
       - "Accredited Foreign Government Official": rep_official
         help: |
           I am an accredited foreign government official, as defined in 8 C.F.R. § 1291.1(a)(5)
@@ -320,7 +366,7 @@ code: |
 ---
 id: Qualification Information
 question: |
-  Provide further Information on your Qualifications
+  More information about your qualifications
 fields:
   - "Full Name of Court": full_court_name
     help: |
@@ -359,16 +405,16 @@ code: |
   if not is_attorney:
     full_court_name = ""
     bar_number = ""
-  elif not is_accredited_representative:
+  if not is_accredited_representative:
     represented_organization = ""
-  elif not is_foreign_official:
+  if not is_foreign_official:
     represented_country = ""
 ---
 id: Attorney or Representative Entrance
 question: |
-  Further Representation Information
+  Representation details
 subquestion: |
-  Specify whether you are an EOIR ordered Qualified Representative, or entered as an attorney or representative for the named party.  Also provide the EOIR ID number and confirm if you are providing this representation pro bono.
+  Tell us whether you are entering an appearance or appearing as an EOIR-ordered qualified representative. Also provide your EOIR ID number and confirm if you are providing this representation pro bono.
 fields:
   - Select One: attorney_or_rep_variable
     datatype: radio
@@ -393,7 +439,7 @@ code: |
 ---
 id: Attorney or Representative Role
 question: |
-  Further Representation Information
+  Representation details
 subquestion: |
   Select whether you are the primary, non-primary, or appearing on behalf of another attorney/representative.
 fields:
@@ -419,6 +465,9 @@ code: |
     is_primary_attorney_or_represenative = False
     is_non_primary_attorney_or_representative = True
     is_on_behalf_of_attorney = False
+  if not is_on_behalf_of_attorney:
+    agent_represented_attorney_name = ""
+    on_behalf_of_date = None
 ---
 id: Acting on Behalf of Attorney
 question: |
@@ -478,7 +527,7 @@ fields:
 ---
 id: Service Question
 question: |
-  Do you want to fill out service information?
+  Do you want to add proof of service?
 yesno: do_service
 ---
 id: Proof of Service
@@ -505,7 +554,7 @@ fields:
   - "Additional Information": additional_information
     help: |
       If you are filing this form as a reputable individual as defined in 8 C.F.R. § 1292.1(a)(3), 
-      please provide a statement here how you meet that criteria, including that you are appearing on 
+      please provide a statement here about how you meet those criteria, including that you are appearing on 
       an individual basis at the request of the person entitled to representation and describing your 
       pre-existing relationship or connection to that person
     input type: area
@@ -516,7 +565,7 @@ id: preview form_eoir28_omb11250006
 question: |
   Preview your form before you sign it
 subquestion: |
-  Here is a preview of the form you will sign on the next page.   
+  Here is a preview of the form you will sign on the next page.
   
   ${ al_court_bundle.as_pdf(key='preview') }
 
@@ -533,6 +582,11 @@ code: |
     signature_fields = ['representative1_signature', 'agent1_signature']
   else:
     signature_fields = ['representative1_signature']
+    service_delivery_date = None
+    agent1_name = ""
+    dhs_address = ""
+    is_electronically_filed = False
+    agent1_signature = ""
 ---
 question: |
   Attorney or Representative Signature, sign below
@@ -772,7 +826,7 @@ review:
       ${ agent1_signature }
   - Edit: additional_information
     button: |
-      **Additional Information: If you are filing this form as a reputable individual as defined in 8 C.F.R. § 1292.1(a)(3), please provide a statement below how you meet that criteria, including that you are appearing on an individual basis at the request of the person entitled to representation and describing your pre-existing relationship or connection to that person**:
+      **Additional Information: If you are filing this form as a reputable individual as defined in 8 C.F.R. § 1292.1(a)(3), please provide a statement below about how you meet those criteria, including that you are appearing on an individual basis at the request of the person entitled to representation and describing your pre-existing relationship or connection to that person**:
       > ${ single_paragraph(additional_information) }
 ---
 id: download form_eoir28_omb11250006
@@ -782,7 +836,13 @@ question: |
 subquestion: |
   Thank you ${representative1_name_first}. Your form is ready to download and deliver.
   
-  View, download and send your form below. Click the "Edit answers" button to fix any mistakes.
+  View, download, and send your form below. Click "Edit answers" to fix any mistakes.
+
+  Next steps:
+
+  1. Sign and file the form with the Immigration Court.
+  1. Serve a copy on DHS unless you filed in ECAS and the opposing party participates in ECAS.
+  1. Keep a copy for your records.
 
   ${ action_button_html(url_action('review_form_eoir28_omb11250006'), label='Edit answers', color='info') }
   
@@ -866,11 +926,11 @@ attachment:
       - "is_non_primary_attorney_or_representative": ${ is_non_primary_attorney_or_representative }
       - "is_primary_attorney_or_represenative": ${ is_primary_attorney_or_represenative }
       - "agent_represented_attorney_name": ${ agent_represented_attorney_name }
-      - "on_behalf_of_date": ${ on_behalf_of_date.format() }
+      - "on_behalf_of_date": ${ on_behalf_of_date.format() if on_behalf_of_date else '' }
       - "is_on_behalf_of_attorney": ${ is_on_behalf_of_attorney }
       - "is_providing_pro_bono": ${ is_providing_pro_bono }
       - "is_not_providing_pro_bono": ${ is_not_providing_pro_bono }
-      - "service_delivery_date": ${ service_delivery_date.format() }
+      - "service_delivery_date": ${ service_delivery_date.format() if service_delivery_date else '' }
       - "agent1_name": ${ agent1_name }
       - "dhs_address": ${ dhs_address }
       - "is_electronically_filed": ${ is_electronically_filed }
