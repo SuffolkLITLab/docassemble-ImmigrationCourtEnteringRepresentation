@@ -528,7 +528,9 @@ fields:
 id: Service Question
 question: |
   Do you want to add proof of service?
-yesno: do_service
+fields:
+  - no label: do_service
+    datatype: yesnoradio
 ---
 id: Proof of Service
 question: |
@@ -588,6 +590,7 @@ code: |
     is_electronically_filed = False
     agent1_signature = ""
 ---
+id: "attorney or representative signature sign below"
 question: |
   Attorney or Representative Signature, sign below
 signature: representative1_signature
@@ -600,6 +603,7 @@ code: |
   signature_date if is_signing else ""
   representative1_signature_date = signature_date
 ---
+id: "service agent signature sign below"
 question: |
   Service Agent Signature, sign below
 signature: agent1_signature
